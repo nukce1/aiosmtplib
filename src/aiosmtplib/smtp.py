@@ -296,9 +296,9 @@ class SMTP:
                 "Either a TLS context or a certificate/key must be provided"
             )
 
-        if self.sock is not None and any([self.hostname, self.port, self.socket_path]):
+        if self.sock is not None and any([self.port, self.socket_path]):
             raise ValueError(
-                "The socket option is not compatible with hostname, port or socket_path"
+                "The socket option is not compatible with explicit server parameters or socket_path"
             )
 
         if self.socket_path is not None and any([self.hostname, self.port]):
@@ -463,6 +463,7 @@ class SMTP:
         if self.sock is not None:
             connect_coro = self.loop.create_connection(
                 lambda: protocol,
+                server_hostname=self.hostname,
                 sock=self.sock,
                 ssl=tls_context,
                 ssl_handshake_timeout=ssl_handshake_timeout,
